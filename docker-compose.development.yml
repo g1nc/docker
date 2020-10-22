@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  api:
+    command: npm run dev
+    volumes:
+      - ./api/src:/usr/src/app/src
+  frontend:
+    command: yarn start
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./frontend/src:/usr/src/app/src
