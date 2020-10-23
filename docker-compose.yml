@@ -2,12 +2,12 @@ version: "3.8"
 
 services:
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
     container_name: docker-frontend
     command: serve -s build -l 3000
     restart: unless-stopped
-    ports:
-      - "3000:3000"
     networks:
       - docker-network
 
@@ -16,14 +16,14 @@ services:
     container_name: docker-api
     command: npm run start
     restart: unless-stopped
-    ports:
-      - "3001:3001"
     environment:
       - PORT=3001
       - MONGO_URL=mongodb://api_db:27017/api
       - AUTH_API_URL=http://auth:3002/api
+      - MAILER_API_URL=http://mailer:3003/api
     depends_on:
       - api_db
+      - mailer
     networks:
       - docker-network
 
@@ -32,14 +32,22 @@ services:
     container_name: docker-auth
     command: npm run start
     restart: unless-stopped
-    ports:
-      - "3002:3002"
     environment:
       - PORT=3002
       - MONGO_URL=mongodb://auth_db:27017/auth
       - API_URL=http://api:3001/api
     depends_on:
       - auth_db
+    networks:
+      - docker-network
+
+  mailer:
+    build: ./mailer
+    container_name: docker-mailer
+    command: npm run start
+    restart: unless-stopped
+    environment:
+      - PORT=3003
     networks:
       - docker-network
 
@@ -68,6 +76,9 @@ services:
       - ./nginx/nginx.conf.prod:/etc/nginx/conf.d/nginx.conf
     depends_on:
       - frontend
+      - api
+      - auth
+      - mailer
     networks:
       - docker-network
 

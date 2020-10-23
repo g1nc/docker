@@ -1,14 +1,21 @@
 import React from 'react';
+import axios from 'axios';
 import logo from './logo.svg';
 import './App.css';
 
 function App() {
+  const makeApiRequest = () => {
+    console.log('make api request')
+    axios.get('/api/testmailer').then(response => {
+      console.log(response)
+    })
+  }
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload. Change with docker
+          Edit <code>src/App.js</code> and save to reload.
         </p>
         <a
           className="App-link"
@@ -19,6 +26,7 @@ function App() {
           Learn React
         </a>
       </header>
+      <button onClick={makeApiRequest}>Make api request</button>
     </div>
   );
 }

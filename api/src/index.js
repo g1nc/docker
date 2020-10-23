@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const axios = require('axios');
 const {connectDb} = require('./helpers/db');
-const {port, db, authApiUrl} = require('./configuration');
+const {port, db, authApiUrl, mailerApiUrl} = require('./configuration');
 const app = express();
 const postSchema = new mongoose.Schema({
     name: String
@@ -37,7 +37,7 @@ app.get('/api/testapidata', (req, res) => {
     })
 })
 
-app.get('/test/withcurrentuser', (req, res) => {
+app.get('/testwithcurrentuser', (req, res) => {
     axios.get(authApiUrl + '/currentUser').then(response => {
         res.json({
             testwithcurrentuser: true,
@@ -45,6 +45,16 @@ app.get('/test/withcurrentuser', (req, res) => {
         });
     })
 })
+
+app.get('/testmailer', (req, res) => {
+    axios.get(mailerApiUrl + '/send').then(response => {
+        res.json({
+            testmailer: true,
+            mailResponse: response.data
+        });
+    })
+})
+
 
 connectDb()
     .on('error', console.log)
